@@ -45,6 +45,10 @@ We use `.nvmrc` to enforce the Node version (v20+).
     ```bash
     sudo gem install cocoapods
     ```
+* **xcbeautify** (Optional but recommended for readable build logs):
+    ```bash
+    brew install xcbeautify
+    ```
 
 ### Physical Device Configuration
 1. **Connect via USB**: Plug your iPhone into your Mac.
@@ -53,17 +57,18 @@ We use `.nvmrc` to enforce the Node version (v20+).
     * Go to **Settings > Privacy & Security > Developer Mode**.
     * Enable it and restart your device.
 4. **Xcode Signing**:
-    * Open `ios/BLECLIApp.xcworkspace` in Xcode.
+    * Open `ios/BLECLIApp.xcworkspace` in Xcode. **Important:** Do not open `.xcodeproj`.
     * Select the project root in the left navigator.
     * Select the **BLECLIApp** target.
     * Go to the **Signing & Capabilities** tab.
     * **Team**: Select your personal Apple ID (or create one).
     * **Bundle Identifier**: You may need to change `org.reactjs.native.example.BLECLIApp` to something unique (e.g., `com.yourname.blecliapp`) to sign successfully with a free account.
 
-### Bluetooth Permissions
-The `Info.plist` is already configured with:
+### Bluetooth & Location Permissions
+The `Info.plist` is configured with:
 * `NSBluetoothAlwaysUsageDescription`
 * `NSBluetoothPeripheralUsageDescription`
+* `NSLocationWhenInUseUsageDescription` (Required for some BLE libraries/iOS versions to prevent crashes, even if location isn't explicitly used)
 
 When you first run the app, you **must** allow Bluetooth access when the system prompt appears.
 
@@ -145,6 +150,33 @@ The app handles runtime permission requests. Ensure you tap "Allow" for "Nearby 
         ```
 
 ## Troubleshooting
+
+* **Build Failures / "Module map not found"**:
+    If the build fails with missing modules or headers after `pod install`:
+    1. **Deep Clean**:
+        ```bash
+        rm -rf ios/Pods ios/Podfile.lock ios/build ~/Library/Developer/Xcode/DerivedData/BLECLIApp-*
+        cd ios && pod install && cd ..
+        ```
+    2. **Debug with xcbeautify**:
+        Run the build command manually to see clean errors:
+        ```bash
+        cd ios && xcodebuild -workspace BLECLIApp.xcworkspace -scheme BLECLIApp -configuration Debug -sdk iphonesimulator clean build | xcbeautify
+        ```
+
+* **Sandbox Errors (file-write-create deny)**:
+    If you see `Sandbox: bash(...) deny(1) file-write-create`, it means Xcode's User Script Sandboxing is blocking a build script (often `react-native-xcode.sh`) from writing to DerivedData.
+    * **Fix**: Open `ios/BLECLIApp.xcodeproj/project.pbxproj` and set `ENABLE_USER_SCRIPT_SANDBOXING = NO;` for all configurations. (This has been applied to the project).
+
+* **CocoaPods / Ruby Issues**:
+    If you see errors like `Unable to open base configuration reference file` or `Could not find 'nap'`, it's likely a Ruby environment mismatch.
+    1. Ensure you are using the system or a properly managed Ruby version.
+    2. Try cleaning the project and reinstalling pods (see Deep Clean above).
+    3. If issues persist, you can try installing CocoaPods via Homebrew as a fallback:
+        ```bash
+        brew install cocoapods
+        unset GEM_HOME && unset GEM_PATH && cd ios && /opt/homebrew/bin/pod install && cd ..
+        ```
 
 * **iOS Signing Issues**: Open `ios/BLECLIApp.xcworkspace` in Xcode and check the "Signing & Capabilities" tab for errors.
 * **Android Build Failures**:
