@@ -11,6 +11,7 @@ export class LogParser {
 
   // Regex patterns
   private static readonly LOG_LINE_RE = /^([EWIDV]) \((\d+)\) ([^:]+): (.*)$/;
+  // eslint-disable-next-line no-control-regex
   private static readonly ANSI_PREFIX_RE = /^(?:\x1b\[[0-9;]*m)+/;
   private static readonly LOG_PREFIXES = ['E (', 'W (', 'I (', 'D (', 'V ('];
   private static readonly SUPPRESSED_MONITOR_TAGS = new Set(['FUSION', 'MOTION', 'FLEX', 'RSSI']);
@@ -180,6 +181,7 @@ export class LogParser {
 
   private stripAnsi(text: string): string {
     // A simple ANSI strip regex
+    // eslint-disable-next-line no-control-regex
     return text.replace(/\x1b\[[0-9;]*m/g, '');
   }
 }

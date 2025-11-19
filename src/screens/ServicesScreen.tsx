@@ -11,7 +11,7 @@ export const ServicesScreen = () => {
   if (!connectedDevice) {
     return (
       <View style={styles.center}>
-        <Text variant="headlineMedium" style={{ color: theme.colors.secondary, marginBottom: 8 }}>No device connected</Text>
+        <Text variant="headlineMedium" style={[styles.noDeviceText, { color: theme.colors.secondary }]}>No device connected</Text>
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Please connect to a device from the Scan tab.</Text>
       </View>
     );
@@ -26,7 +26,7 @@ export const ServicesScreen = () => {
       <ScrollView contentContainerStyle={styles.content}>
         <Card mode="elevated" style={styles.card}>
           <Card.Content>
-            <Text variant="titleMedium" style={{ marginBottom: 8 }}>Device Info</Text>
+            <Text variant="titleMedium" style={styles.cardTitle}>Device Info</Text>
             <View style={styles.codeBlock}>
               <Text style={styles.json}>{JSON.stringify(connectedDevice, null, 2)}</Text>
             </View>
@@ -42,6 +42,8 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   content: { padding: 16 },
   card: { marginBottom: 16 },
+  cardTitle: { marginBottom: 8 },
+  noDeviceText: { marginBottom: 8 },
   codeBlock: {
     backgroundColor: '#f0f0f0',
     padding: 12,

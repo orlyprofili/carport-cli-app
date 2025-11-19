@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import { NativeModules, Platform, PermissionsAndroid } from 'react-native';
+import { Platform, PermissionsAndroid } from 'react-native';
 import BleManager, { Peripheral } from 'react-native-ble-manager';
 import { Buffer } from 'buffer';
 import { LogParser } from '../utils/LogParser';
