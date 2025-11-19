@@ -66,10 +66,26 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLogs((prev) => [...prev, `RX: ${str}`]);
     };
 
+    const handleDisconnectedPeripheral = (data: any) => {
+      console.log('Disconnected from ' + data.peripheral);
+      setConnectedDevice((prev) => {
+        if (prev?.id === data.peripheral) {
+          return null;
+        }
+        return prev;
+      });
+    };
+
+    const handleUpdateState = (args: any) => {
+      console.log('BleManager state:', args.state);
+    };
+
     const listeners = [
       BleManager.onDiscoverPeripheral(handleDiscoverPeripheral),
       BleManager.onStopScan(handleStopScan),
       BleManager.onDidUpdateValueForCharacteristic(handleUpdateValue),
+      BleManager.onDisconnectPeripheral(handleDisconnectedPeripheral),
+      BleManager.onDidUpdateState(handleUpdateState),
     ];
 
     return () => {
@@ -113,6 +129,10 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const connect = async (id: string) => {
     try {
       await BleManager.connect(id);
+      
+      // Wait for connection to stabilize (common practice in BLE)
+      await new Promise<void>(resolve => setTimeout(resolve, 900));
+
       const peripheral = await BleManager.retrieveServices(id);
       setConnectedDevice(peripheral);
       
