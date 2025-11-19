@@ -17,6 +17,9 @@ const theme = {
     ...MD3LightTheme.colors,
     primary: '#006CFF', // Tech blue
     secondary: '#00B8D4', // Teal
+    surface: '#FFFFFF',
+    background: '#F5F5F5',
+    surfaceVariant: '#E0E0E0',
   },
 };
 

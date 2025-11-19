@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import { Appbar, Card, Text, FAB, ActivityIndicator, useTheme, IconButton, Avatar } from 'react-native-paper';
+import { Appbar, Card, Text, ActivityIndicator, useTheme, IconButton, Avatar } from 'react-native-paper';
 import { useBLE } from '../context/BLEContext';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -57,7 +57,7 @@ const DeviceItem = ({ item, isConnected = false, onPress, onDisconnect }: { item
 };
 
 export const ScanScreen = () => {
-  const { scan, stopScan, isScanning, devices, connect, connectedDevice, disconnect } = useBLE();
+  const { scan, isScanning, devices, connect, connectedDevice, disconnect } = useBLE();
   const navigation = useNavigation();
   const theme = useTheme();
 
@@ -66,19 +66,11 @@ export const ScanScreen = () => {
     navigation.navigate('CLI' as never);
   };
 
-  const toggleScan = () => {
-    if (isScanning) {
-      stopScan();
-    } else {
-      scan();
-    }
-  };
-
   const availableDevices = devices.filter(d => d.id !== connectedDevice?.id);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Appbar.Header mode="center-aligned" elevated>
+      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.Content title="Device Scanner" />
         {isScanning && <ActivityIndicator animating={true} color={theme.colors.primary} style={styles.activityIndicator} />}
       </Appbar.Header>
@@ -100,6 +92,8 @@ export const ScanScreen = () => {
           data={availableDevices}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
+          refreshing={isScanning}
+          onRefresh={scan}
           renderItem={({ item }) => (
             <DeviceItem 
               item={item} 
@@ -116,21 +110,13 @@ export const ScanScreen = () => {
             !connectedDevice ? (
                 <View style={styles.emptyState}>
                 <Text variant="bodyLarge" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {isScanning ? 'Searching for devices...' : 'Press Scan to start'}
+                    {isScanning ? 'Searching for devices...' : 'Pull down to scan'}
                 </Text>
                 </View>
             ) : null
           }
         />
       </View>
-
-      <FAB
-        icon={isScanning ? 'stop' : 'magnify'}
-        style={[styles.fab, { backgroundColor: theme.colors.primaryContainer }]}
-        onPress={toggleScan}
-        label={isScanning ? 'Stop' : 'Scan'}
-        color={theme.colors.onPrimaryContainer}
-      />
     </SafeAreaView>
   );
 };
@@ -138,15 +124,9 @@ export const ScanScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   content: { flex: 1 },
-  listContent: { padding: 16, paddingBottom: 80 },
+  listContent: { padding: 16, paddingBottom: 80, flexGrow: 1 },
   connectedSection: { padding: 16, paddingBottom: 0 },
   card: { marginBottom: 12 },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
   emptyState: {
     padding: 20,
     alignItems: 'center',

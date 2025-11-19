@@ -29,7 +29,7 @@ export const CLIScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Appbar.Header elevated>
+      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.Content title={connectedDevice.name || 'Unknown Device'} subtitle="Connected" />
         <Appbar.Action icon="lan-disconnect" onPress={disconnect} color={theme.colors.error} />
       </Appbar.Header>

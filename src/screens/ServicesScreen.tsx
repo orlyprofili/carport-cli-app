@@ -19,7 +19,7 @@ export const ServicesScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Appbar.Header elevated>
+      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.Content title="Services & Characteristics" />
       </Appbar.Header>
 
