@@ -20,6 +20,25 @@ const theme = {
   },
 };
 
+const screenOptions = ({ route }: { route: any }) => ({
+  headerShown: false,
+  tabBarIcon: ({ color, size }: { color: string, size: number }) => {
+    let iconName;
+
+    if (route.name === 'Scan') {
+      iconName = 'bluetooth-audio';
+    } else if (route.name === 'CLI') {
+      iconName = 'console-line';
+    } else if (route.name === 'Services') {
+      iconName = 'format-list-bulleted-type';
+    }
+
+    return <MaterialCommunityIcons name={iconName || 'circle'} size={size} color={color} />;
+  },
+  tabBarActiveTintColor: theme.colors.primary,
+  tabBarInactiveTintColor: 'gray',
+});
+
 const App = () => {
   return (
     <SafeAreaProvider>
@@ -27,24 +46,7 @@ const App = () => {
         <BLEProvider>
           <NavigationContainer>
             <Tab.Navigator
-              screenOptions={({ route }) => ({
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => {
-                  let iconName;
-
-                  if (route.name === 'Scan') {
-                    iconName = 'bluetooth-audio';
-                  } else if (route.name === 'CLI') {
-                    iconName = 'console-line';
-                  } else if (route.name === 'Services') {
-                    iconName = 'format-list-bulleted-type';
-                  }
-
-                  return <MaterialCommunityIcons name={iconName || 'circle'} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: theme.colors.primary,
-                tabBarInactiveTintColor: 'gray',
-              })}
+              screenOptions={screenOptions}
             >
               <Tab.Screen name="Scan" component={ScanScreen} />
               <Tab.Screen name="CLI" component={CLIScreen} />

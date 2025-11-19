@@ -5,6 +5,45 @@ import { useBLE } from '../context/BLEContext';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const DeviceItem = ({ item, isConnected = false, onPress, onDisconnect }: { item: any, isConnected?: boolean, onPress: () => void, onDisconnect?: () => void }) => {
+  const theme = useTheme();
+  
+  const LeftContent = (props: any) => isConnected ? (
+    <Avatar.Icon {...props} icon="bluetooth-connect" size={40} style={{ backgroundColor: theme.colors.primaryContainer }} color={theme.colors.primary} />
+  ) : (
+    <View style={[styles.rssiBadge, { backgroundColor: theme.colors.secondaryContainer }]}>
+       <Text style={[styles.rssiText, { color: theme.colors.onSecondaryContainer }]}>{item.rssi}</Text>
+    </View>
+  );
+
+  const RightContent = (props: any) => isConnected ? (
+    <IconButton {...props} icon="close-circle-outline" iconColor={theme.colors.error} onPress={onDisconnect} />
+  ) : (
+    <IconButton {...props} icon="chevron-right" iconColor={theme.colors.onSurfaceVariant} onPress={onPress} />
+  );
+
+  return (
+    <Card 
+      style={[
+        styles.card, 
+        isConnected && { borderColor: theme.colors.primary, borderWidth: 1, backgroundColor: theme.colors.surface }
+      ]} 
+      onPress={onPress} 
+      mode={isConnected ? "outlined" : "elevated"}
+    >
+      <Card.Title
+        title={item.name || 'Unnamed Device'}
+        titleVariant="titleMedium"
+        titleStyle={isConnected ? [styles.titleConnected, { color: theme.colors.primary }] : undefined}
+        subtitle={isConnected ? 'Connected • Tap to open CLI' : `ID: ${item.id}`}
+        subtitleStyle={isConnected ? { color: theme.colors.primary } : undefined}
+        left={LeftContent}
+        right={RightContent}
+      />
+    </Card>
+  );
+};
+
 export const ScanScreen = () => {
   const { scan, stopScan, isScanning, devices, connect, connectedDevice, disconnect } = useBLE();
   const navigation = useNavigation();
@@ -25,49 +64,23 @@ export const ScanScreen = () => {
 
   const availableDevices = devices.filter(d => d.id !== connectedDevice?.id);
 
-  const renderDeviceItem = ({ item, isConnected = false }: { item: any, isConnected?: boolean }) => (
-    <Card 
-      style={[
-        styles.card, 
-        isConnected && { borderColor: theme.colors.primary, borderWidth: 1, backgroundColor: theme.colors.surface }
-      ]} 
-      onPress={() => isConnected ? navigation.navigate('CLI' as never) : handleConnect(item.id)} 
-      mode={isConnected ? "outlined" : "elevated"}
-    >
-      <Card.Title
-        title={item.name || 'Unnamed Device'}
-        titleVariant="titleMedium"
-        titleStyle={isConnected ? { color: theme.colors.primary, fontWeight: '600' } : {}}
-        subtitle={isConnected ? 'Connected • Tap to open CLI' : `ID: ${item.id}`}
-        subtitleStyle={isConnected ? { color: theme.colors.primary } : {}}
-        left={(props) => isConnected ? (
-          <Avatar.Icon {...props} icon="bluetooth-connect" size={40} style={{ backgroundColor: theme.colors.primaryContainer }} color={theme.colors.primary} />
-        ) : (
-          <View style={[styles.rssiBadge, { backgroundColor: theme.colors.secondaryContainer }]}>
-             <Text style={{ fontWeight: 'bold', color: theme.colors.onSecondaryContainer }}>{item.rssi}</Text>
-          </View>
-        )}
-        right={(props) => isConnected ? (
-          <IconButton {...props} icon="close-circle-outline" iconColor={theme.colors.error} onPress={() => disconnect()} />
-        ) : (
-          <IconButton {...props} icon="chevron-right" iconColor={theme.colors.onSurfaceVariant} onPress={() => handleConnect(item.id)} />
-        )}
-      />
-    </Card>
-  );
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Appbar.Header mode="center-aligned" elevated>
         <Appbar.Content title="Device Scanner" />
-        {isScanning && <ActivityIndicator animating={true} color={theme.colors.primary} style={{ marginRight: 16 }} />}
+        {isScanning && <ActivityIndicator animating={true} color={theme.colors.primary} style={styles.activityIndicator} />}
       </Appbar.Header>
       
       <View style={styles.content}>
         {connectedDevice && (
             <View style={styles.connectedSection}>
-                <Text variant="labelLarge" style={{ marginLeft: 4, marginBottom: 8, color: theme.colors.primary }}>Connected Device</Text>
-                {renderDeviceItem({ item: connectedDevice, isConnected: true })}
+                <Text variant="labelLarge" style={[styles.connectedLabel, { color: theme.colors.primary }]}>Connected Device</Text>
+                <DeviceItem 
+                  item={connectedDevice} 
+                  isConnected={true} 
+                  onPress={() => navigation.navigate('CLI' as never)}
+                  onDisconnect={() => disconnect()}
+                />
             </View>
         )}
 
@@ -75,10 +88,16 @@ export const ScanScreen = () => {
           data={availableDevices}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          renderItem={({ item }) => renderDeviceItem({ item, isConnected: false })}
+          renderItem={({ item }) => (
+            <DeviceItem 
+              item={item} 
+              isConnected={false} 
+              onPress={() => handleConnect(item.id)}
+            />
+          )}
           ListHeaderComponent={
             availableDevices.length > 0 ? (
-                <Text variant="labelLarge" style={{ marginBottom: 8, color: theme.colors.onSurfaceVariant }}>Available Devices</Text>
+                <Text variant="labelLarge" style={[styles.listHeader, { color: theme.colors.onSurfaceVariant }]}>Available Devices</Text>
             ) : null
           }
           ListEmptyComponent={
@@ -128,5 +147,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
+  },
+  rssiText: {
+    fontWeight: 'bold',
+  },
+  activityIndicator: {
+    marginRight: 16,
+  },
+  connectedLabel: {
+    marginLeft: 4,
+    marginBottom: 8,
+  },
+  listHeader: {
+    marginBottom: 8,
+  },
+  titleConnected: {
+    fontWeight: '600',
   }
 });

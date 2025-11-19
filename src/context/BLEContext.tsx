@@ -4,9 +4,6 @@ import BleManager, { Peripheral } from 'react-native-ble-manager';
 import { Buffer } from 'buffer';
 import { LogParser } from '../utils/LogParser';
 
-const BleManagerModule = NativeModules.BleManager;
-// const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
-
 // 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
 const SERVICE_UUID = '6E400001-B5A3-F393-E0A9-E50E24DCCA9E';
 const RX_UUID = '6E400002-B5A3-F393-E0A9-E50E24DCCA9E'; // Write
@@ -107,7 +104,7 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => {
       listeners.forEach((l) => l.remove());
     };
-  }, []);
+  }, [logParser]);
 
   const scan = async () => {
     if (Platform.OS === 'android' && Platform.Version >= 23) {

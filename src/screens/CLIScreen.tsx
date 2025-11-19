@@ -14,7 +14,7 @@ export const CLIScreen = () => {
   if (!connectedDevice) {
     return (
       <View style={styles.center}>
-        <Text variant="headlineMedium" style={{ color: theme.colors.secondary, marginBottom: 8 }}>No device connected</Text>
+        <Text variant="headlineMedium" style={[styles.noDeviceText, { color: theme.colors.secondary }]}>No device connected</Text>
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Please connect to a device from the Scan tab.</Text>
       </View>
     );
@@ -106,4 +106,5 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(0,0,0,0.05)',
   },
   input: { backgroundColor: 'white' },
+  noDeviceText: { marginBottom: 8 },
 });

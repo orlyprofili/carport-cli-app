@@ -129,6 +129,7 @@ The app handles runtime permission requests. Ensure you tap "Allow" for "Nearby 
     ```bash
     cd ios && pod install && cd ..
     ```
+   (see 4. **Xcode Signing**, you need to do this before npm running on iOS devices)
 
 3. **Start Metro Bundler**:
     Open a terminal and run:
