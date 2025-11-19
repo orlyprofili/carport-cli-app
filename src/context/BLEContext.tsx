@@ -1,10 +1,10 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { NativeModules, NativeEventEmitter, Platform, PermissionsAndroid } from 'react-native';
+import { NativeModules, Platform, PermissionsAndroid } from 'react-native';
 import BleManager, { Peripheral } from 'react-native-ble-manager';
 import { Buffer } from 'buffer';
 
 const BleManagerModule = NativeModules.BleManager;
-const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+// const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 // 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
 const SERVICE_UUID = '6E400001-B5A3-F393-E0A9-E50E24DCCA9E';
@@ -36,6 +36,7 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       .catch((err) => console.error('BleManager init error:', err));
 
     const handleDiscoverPeripheral = (peripheral: Peripheral) => {
+      console.log('Discovered:', peripheral.name || peripheral.id);
       setDevices((prev) => {
         if (!prev.find((p) => p.id === peripheral.id)) {
           return [...prev, peripheral];
@@ -54,9 +55,9 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     const listeners = [
-      bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral),
-      bleManagerEmitter.addListener('BleManagerStopScan', handleStopScan),
-      bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValue),
+      BleManager.onDiscoverPeripheral(handleDiscoverPeripheral),
+      BleManager.onStopScan(handleStopScan),
+      BleManager.onDidUpdateValueForCharacteristic(handleUpdateValue),
     ];
 
     return () => {
