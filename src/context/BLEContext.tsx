@@ -1,0 +1,132 @@
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { NativeModules, NativeEventEmitter, Platform, PermissionsAndroid } from 'react-native';
+import BleManager, { Peripheral } from 'react-native-ble-manager';
+import { Buffer } from 'buffer';
+
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
+// 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
+const SERVICE_UUID = '6E400001-B5A3-F393-E0A9-E50E24DCCA9E';
+const RX_UUID = '6E400002-B5A3-F393-E0A9-E50E24DCCA9E'; // Write
+const TX_UUID = '6E400003-B5A3-F393-E0A9-E50E24DCCA9E'; // Notify
+
+interface BLEContextType {
+  isScanning: boolean;
+  devices: Peripheral[];
+  connectedDevice: Peripheral | null;
+  scan: () => void;
+  connect: (id: string) => Promise<void>;
+  disconnect: () => Promise<void>;
+  sendMessage: (msg: string) => Promise<void>;
+  logs: string[];
+}
+
+const BLEContext = createContext<BLEContextType | undefined>(undefined);
+
+export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isScanning, setIsScanning] = useState(false);
+  const [devices, setDevices] = useState<Peripheral[]>([]);
+  const [connectedDevice, setConnectedDevice] = useState<Peripheral | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  useEffect(() => {
+    BleManager.start({ showAlert: false });
+
+    const handleDiscoverPeripheral = (peripheral: Peripheral) => {
+      setDevices((prev) => {
+        if (!prev.find((p) => p.id === peripheral.id)) {
+          return [...prev, peripheral];
+        }
+        return prev;
+      });
+    };
+
+    const handleStopScan = () => {
+      setIsScanning(false);
+    };
+
+    const handleUpdateValue = (data: any) => {
+      const str = Buffer.from(data.value).toString();
+      setLogs((prev) => [...prev, `RX: ${str}`]);
+    };
+
+    const listeners = [
+      bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral),
+      bleManagerEmitter.addListener('BleManagerStopScan', handleStopScan),
+      bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValue),
+    ];
+
+    return () => {
+      listeners.forEach((l) => l.remove());
+    };
+  }, []);
+
+  const scan = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 23) {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) return;
+    }
+    
+    if (Platform.OS === 'android' && Platform.Version >= 31) {
+       const result = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      ]);
+      if (!result['android.permission.BLUETOOTH_SCAN'] || !result['android.permission.BLUETOOTH_CONNECT']) return;
+    }
+
+    setDevices([]);
+    setIsScanning(true);
+    BleManager.scan([SERVICE_UUID], 5, true).catch((err) => {
+      console.error(err);
+      setIsScanning(false);
+    });
+  };
+
+  const connect = async (id: string) => {
+    try {
+      await BleManager.connect(id);
+      const peripheral = await BleManager.retrieveServices(id);
+      setConnectedDevice(peripheral);
+      
+      // Start notification
+      await BleManager.startNotification(id, SERVICE_UUID, TX_UUID);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const disconnect = async () => {
+    if (connectedDevice) {
+      await BleManager.disconnect(connectedDevice.id);
+      setConnectedDevice(null);
+    }
+  };
+
+  const sendMessage = async (msg: string) => {
+    if (!connectedDevice) return;
+    const buffer = Buffer.from(msg);
+    const data = Array.from(buffer);
+    try {
+      await BleManager.write(connectedDevice.id, SERVICE_UUID, RX_UUID, data);
+      setLogs((prev) => [...prev, `TX: ${msg}`]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <BLEContext.Provider value={{ isScanning, devices, connectedDevice, scan, connect, disconnect, sendMessage, logs }}>
+      {children}
+    </BLEContext.Provider>
+  );
+};
+
+export const useBLE = () => {
+  const context = useContext(BLEContext);
+  if (!context) throw new Error('useBLE must be used within a BLEProvider');
+  return context;
+};
