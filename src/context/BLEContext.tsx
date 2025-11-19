@@ -1,7 +1,8 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { NativeModules, Platform, PermissionsAndroid } from 'react-native';
 import BleManager, { Peripheral } from 'react-native-ble-manager';
 import { Buffer } from 'buffer';
+import { LogParser } from '../utils/LogParser';
 
 const BleManagerModule = NativeModules.BleManager;
 // const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -20,7 +21,10 @@ interface BLEContextType {
   connect: (id: string) => Promise<void>;
   disconnect: () => Promise<void>;
   sendMessage: (msg: string) => Promise<void>;
-  logs: string[];
+  cliOutput: string[];
+  monitorOutput: string[];
+  clearCliOutput: () => void;
+  clearMonitorOutput: () => void;
 }
 
 const BLEContext = createContext<BLEContextType | undefined>(undefined);
@@ -29,7 +33,19 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isScanning, setIsScanning] = useState(false);
   const [devices, setDevices] = useState<Peripheral[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Peripheral | null>(null);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [cliOutput, setCliOutput] = useState<string[]>([]);
+  const [monitorOutput, setMonitorOutput] = useState<string[]>([]);
+
+  const logParser = useRef(new LogParser(
+    (text) => setCliOutput(prev => {
+      const next = [...prev, text];
+      return next.length > 1000 ? next.slice(next.length - 1000) : next;
+    }),
+    (text) => setMonitorOutput(prev => {
+      const next = [...prev, text];
+      return next.length > 1000 ? next.slice(next.length - 1000) : next;
+    })
+  )).current;
 
   useEffect(() => {
     BleManager.start({ showAlert: false })
@@ -63,7 +79,7 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const handleUpdateValue = (data: any) => {
       const str = Buffer.from(data.value).toString();
-      setLogs((prev) => [...prev, `RX: ${str}`]);
+      logParser.feed(str);
     };
 
     const handleDisconnectedPeripheral = (data: any) => {
@@ -152,18 +168,42 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const sendMessage = async (msg: string) => {
     if (!connectedDevice) return;
-    const buffer = Buffer.from(msg);
+
+    // Normalize newlines and ensure CRLF termination, matching dashboard.py behavior
+    let normalized = msg.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    if (!normalized.endsWith('\n')) {
+      normalized += '\n';
+    }
+    const encoded = normalized.replace(/\n/g, '\r\n');
+
+    const buffer = Buffer.from(encoded);
     const data = Array.from(buffer);
     try {
       await BleManager.write(connectedDevice.id, SERVICE_UUID, RX_UUID, data);
-      setLogs((prev) => [...prev, `TX: ${msg}`]);
+      setCliOutput(prev => [...prev, `> ${msg}\n`]);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const clearCliOutput = () => setCliOutput([]);
+  const clearMonitorOutput = () => setMonitorOutput([]);
+
   return (
-    <BLEContext.Provider value={{ isScanning, devices, connectedDevice, scan, stopScan, connect, disconnect, sendMessage, logs }}>
+    <BLEContext.Provider value={{ 
+      isScanning, 
+      devices, 
+      connectedDevice, 
+      scan, 
+      stopScan, 
+      connect, 
+      disconnect, 
+      sendMessage, 
+      cliOutput,
+      monitorOutput,
+      clearCliOutput,
+      clearMonitorOutput
+    }}>
       {children}
     </BLEContext.Provider>
   );

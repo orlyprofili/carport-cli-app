@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { View, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { Appbar, TextInput, Text, Surface, useTheme } from 'react-native-paper';
+import { Appbar, TextInput, Text, Surface, useTheme, Button } from 'react-native-paper';
 import { useBLE } from '../context/BLEContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const CLIScreen = () => {
-  const { connectedDevice, sendMessage, logs, disconnect } = useBLE();
+  const { connectedDevice, sendMessage, disconnect, cliOutput, monitorOutput, clearCliOutput, clearMonitorOutput } = useBLE();
   const [input, setInput] = useState('');
-  const flatListRef = useRef<FlatList>(null);
+  const cliListRef = useRef<FlatList>(null);
+  const monitorListRef = useRef<FlatList>(null);
   const theme = useTheme();
 
   if (!connectedDevice) {
@@ -33,18 +34,39 @@ export const CLIScreen = () => {
         <Appbar.Action icon="lan-disconnect" onPress={disconnect} color={theme.colors.error} />
       </Appbar.Header>
 
-      <Surface style={styles.terminal} elevation={2}>
-        <FlatList
-          ref={flatListRef}
-          data={logs}
-          keyExtractor={(_, i) => i.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.log}>{item}</Text>
-          )}
-          contentContainerStyle={styles.logsContent}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        />
-      </Surface>
+      <View style={styles.splitPane}>
+        {/* CLI Console */}
+        <Surface style={styles.pane} elevation={1}>
+          <View style={styles.paneHeader}>
+            <Text variant="titleSmall" style={styles.paneTitle}>CLI Console</Text>
+            <Button compact onPress={clearCliOutput} textColor={theme.colors.primary}>Clear</Button>
+          </View>
+          <FlatList
+            ref={cliListRef}
+            data={cliOutput}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item }) => <Text style={styles.logText}>{item}</Text>}
+            contentContainerStyle={styles.listContent}
+            onContentSizeChange={() => cliListRef.current?.scrollToEnd({ animated: true })}
+          />
+        </Surface>
+
+        {/* Monitor Logs */}
+        <Surface style={styles.pane} elevation={1}>
+          <View style={styles.paneHeader}>
+            <Text variant="titleSmall" style={styles.paneTitle}>Monitor Logs</Text>
+            <Button compact onPress={clearMonitorOutput} textColor={theme.colors.primary}>Clear</Button>
+          </View>
+          <FlatList
+            ref={monitorListRef}
+            data={monitorOutput}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item }) => <Text style={styles.logText}>{item}</Text>}
+            contentContainerStyle={styles.listContent}
+            onContentSizeChange={() => monitorListRef.current?.scrollToEnd({ animated: true })}
+          />
+        </Surface>
+      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -71,20 +93,12 @@ export const CLIScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  terminal: {
-    flex: 1,
-    margin: 16,
-    borderRadius: 12,
-    backgroundColor: '#1E1E1E', // VS Code dark theme background-ish
-    overflow: 'hidden',
-  },
-  logsContent: { padding: 16 },
-  log: { 
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', 
-    fontSize: 13, 
-    marginBottom: 4, 
-    color: '#4CAF50' // Terminal green
-  },
+  splitPane: { flex: 1, padding: 8, gap: 8 },
+  pane: { flex: 1, borderRadius: 8, backgroundColor: '#1E1E1E', overflow: 'hidden' },
+  paneHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 4, backgroundColor: '#2D2D2D' },
+  paneTitle: { color: '#ccc', fontWeight: 'bold' },
+  listContent: { padding: 8 },
+  logText: { fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', fontSize: 12, color: '#eee' },
   inputContainer: {
     padding: 16,
     paddingBottom: Platform.OS === 'ios' ? 16 : 16,
