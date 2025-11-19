@@ -4,7 +4,7 @@ import { useBLE } from '../context/BLEContext';
 import { useNavigation } from '@react-navigation/native';
 
 export const ScanScreen = () => {
-  const { scan, isScanning, devices, connect } = useBLE();
+  const { scan, stopScan, isScanning, devices, connect } = useBLE();
   const navigation = useNavigation();
 
   const handleConnect = async (id: string) => {
@@ -12,9 +12,17 @@ export const ScanScreen = () => {
     navigation.navigate('CLI' as never);
   };
 
+  const toggleScan = () => {
+    if (isScanning) {
+      stopScan();
+    } else {
+      scan();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Button title={isScanning ? 'Scanning...' : 'Scan'} onPress={scan} disabled={isScanning} />
+      <Button title={isScanning ? 'Stop Scanning' : 'Scan'} onPress={toggleScan} />
       <FlatList
         data={devices}
         keyExtractor={(item) => item.id}

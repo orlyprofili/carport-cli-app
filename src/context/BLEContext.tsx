@@ -16,6 +16,7 @@ interface BLEContextType {
   devices: Peripheral[];
   connectedDevice: Peripheral | null;
   scan: () => void;
+  stopScan: () => Promise<void>;
   connect: (id: string) => Promise<void>;
   disconnect: () => Promise<void>;
   sendMessage: (msg: string) => Promise<void>;
@@ -37,6 +38,17 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const handleDiscoverPeripheral = (peripheral: Peripheral) => {
       console.log('Discovered:', peripheral.name || peripheral.id);
+      
+      // Filter by SERVICE_UUID
+      const advertisedUUIDs = peripheral.advertising?.serviceUUIDs;
+      const hasServiceUUID = advertisedUUIDs?.some(uuid => 
+        uuid.toLowerCase() === SERVICE_UUID.toLowerCase()
+      );
+
+      if (!hasServiceUUID) {
+        return;
+      }
+
       setDevices((prev) => {
         if (!prev.find((p) => p.id === peripheral.id)) {
           return [...prev, peripheral];
@@ -89,6 +101,15 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const stopScan = async () => {
+    try {
+      await BleManager.stopScan();
+      setIsScanning(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const connect = async (id: string) => {
     try {
       await BleManager.connect(id);
@@ -122,7 +143,7 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <BLEContext.Provider value={{ isScanning, devices, connectedDevice, scan, connect, disconnect, sendMessage, logs }}>
+    <BLEContext.Provider value={{ isScanning, devices, connectedDevice, scan, stopScan, connect, disconnect, sendMessage, logs }}>
       {children}
     </BLEContext.Provider>
   );
