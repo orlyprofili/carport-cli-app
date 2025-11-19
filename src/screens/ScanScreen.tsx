@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { Appbar, Card, Text, ActivityIndicator, useTheme, IconButton, Avatar } from 'react-native-paper';
+import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { Appbar, Card, Text, useTheme, IconButton, Avatar } from 'react-native-paper';
 import { useBLE } from '../context/BLEContext';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,7 +18,7 @@ const DeviceLeft = ({ isConnected, item, theme, ...props }: any) => {
 
 const DeviceRight = ({ isConnected, onDisconnect, onPress, theme, ...props }: any) => {
   if (isConnected) {
-    return <IconButton {...props} icon="close-circle-outline" iconColor={theme.colors.error} onPress={onDisconnect} />;
+    return <IconButton {...props} icon="link-variant-off" iconColor={theme.colors.error} onPress={onDisconnect} />;
   }
   return <IconButton {...props} icon="chevron-right" iconColor={theme.colors.onSurfaceVariant} onPress={onPress} />;
 };
@@ -68,32 +68,44 @@ export const ScanScreen = () => {
 
   const availableDevices = devices.filter(d => d.id !== connectedDevice?.id);
 
+  const renderHeader = () => (
+    <View>
+      {connectedDevice && (
+        <View style={styles.connectedSection}>
+            <Text variant="labelLarge" style={[styles.connectedLabel, { color: theme.colors.primary }]}>Connected Device</Text>
+            <DeviceItem 
+              item={connectedDevice} 
+              isConnected={true} 
+              onPress={() => navigation.navigate('CLI' as never)}
+              onDisconnect={() => disconnect()}
+            />
+        </View>
+      )}
+      {availableDevices.length > 0 && (
+        <Text variant="labelLarge" style={[styles.listHeader, { color: theme.colors.onSurfaceVariant }, connectedDevice && styles.listHeaderWithConnection]}>Available Devices</Text>
+      )}
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.Content title="Device Scanner" />
-        {isScanning && <ActivityIndicator animating={true} color={theme.colors.primary} style={styles.activityIndicator} />}
       </Appbar.Header>
       
       <View style={styles.content}>
-        {connectedDevice && (
-            <View style={styles.connectedSection}>
-                <Text variant="labelLarge" style={[styles.connectedLabel, { color: theme.colors.primary }]}>Connected Device</Text>
-                <DeviceItem 
-                  item={connectedDevice} 
-                  isConnected={true} 
-                  onPress={() => navigation.navigate('CLI' as never)}
-                  onDisconnect={() => disconnect()}
-                />
-            </View>
-        )}
-
         <FlatList
           data={availableDevices}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          refreshing={isScanning}
-          onRefresh={scan}
+          refreshControl={
+            <RefreshControl
+              refreshing={isScanning}
+              onRefresh={scan}
+              colors={[theme.colors.primary]}
+              tintColor={theme.colors.primary}
+            />
+          }
           renderItem={({ item }) => (
             <DeviceItem 
               item={item} 
@@ -101,11 +113,7 @@ export const ScanScreen = () => {
               onPress={() => handleConnect(item.id)}
             />
           )}
-          ListHeaderComponent={
-            availableDevices.length > 0 ? (
-                <Text variant="labelLarge" style={[styles.listHeader, { color: theme.colors.onSurfaceVariant }]}>Available Devices</Text>
-            ) : null
-          }
+          ListHeaderComponent={renderHeader}
           ListEmptyComponent={
             !connectedDevice ? (
                 <View style={styles.emptyState}>
@@ -127,6 +135,9 @@ const styles = StyleSheet.create({
   listContent: { padding: 16, paddingBottom: 80, flexGrow: 1 },
   connectedSection: { padding: 16, paddingBottom: 0 },
   card: { marginBottom: 12 },
+  listHeaderWithConnection: {
+    marginTop: 16,
+  },
   emptyState: {
     padding: 20,
     alignItems: 'center',

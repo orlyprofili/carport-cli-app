@@ -31,7 +31,7 @@ export const CLIScreen = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.Content title={connectedDevice.name || 'Unknown Device'} subtitle="Connected" />
-        <Appbar.Action icon="lan-disconnect" onPress={disconnect} color={theme.colors.error} />
+        <Appbar.Action icon="link-variant-off" onPress={disconnect} color={theme.colors.error} />
       </Appbar.Header>
 
       <View style={styles.splitPane}>
