@@ -31,7 +31,9 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    BleManager.start({ showAlert: false });
+    BleManager.start({ showAlert: false })
+      .then(() => console.log('BleManager initialized'))
+      .catch((err) => console.error('BleManager init error:', err));
 
     const handleDiscoverPeripheral = (peripheral: Peripheral) => {
       setDevices((prev) => {
@@ -80,7 +82,7 @@ export const BLEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setDevices([]);
     setIsScanning(true);
-    BleManager.scan([SERVICE_UUID], 5, true).catch((err) => {
+    BleManager.scan({ serviceUUIDs: [SERVICE_UUID], seconds: 5, allowDuplicates: true }).catch((err) => {
       console.error(err);
       setIsScanning(false);
     });

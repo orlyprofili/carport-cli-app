@@ -70,6 +70,8 @@ The `Info.plist` is configured with:
 * `NSBluetoothPeripheralUsageDescription`
 * `NSLocationWhenInUseUsageDescription` (Required for some BLE libraries/iOS versions to prevent crashes, even if location isn't explicitly used)
 
+**Note:** The "New Architecture" (Fabric/TurboModules) is currently **disabled** to ensure stability with `react-native-ble-manager`.
+
 When you first run the app, you **must** allow Bluetooth access when the system prompt appears.
 
 ---
