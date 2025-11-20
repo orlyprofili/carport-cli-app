@@ -14,14 +14,12 @@ If you haven't installed Homebrew:
 
 Install essential tools:
 ```bash
-brew install node
 brew install watchman
 ```
 
 ### Java Development Kit (JDK)
 React Native (0.73+) requires **JDK 17**. We recommend Zulu OpenJDK.
 ```bash
-brew tap homebrew/cask-versions
 brew install --cask zulu@17
 ```
 *Verify:* `javac -version` should output something like `openjdk 17.0.x`.
@@ -42,8 +40,11 @@ We use `.nvmrc` to enforce the Node version (v20+).
 ### Software Requirements
 * **Xcode**: Install the latest version from the Mac App Store (Minimum Xcode 15+ for iOS 17+).
 * **CocoaPods**:
+    We use **Bundler** to manage the CocoaPods version.
     ```bash
-    sudo gem install cocoapods
+    gem install bundler
+    # Run this in the project root to install the specific CocoaPods version defined in Gemfile
+    bundle install
     ```
 * **xcbeautify** (Optional but recommended for readable build logs):
     ```bash
@@ -127,9 +128,9 @@ The app handles runtime permission requests. Ensure you tap "Allow" for "Nearby 
 
 2. **Install iOS Pods**:
     ```bash
-    cd ios && pod install && cd ..
+    cd ios && bundle exec pod install && cd ..
     ```
-   (see 4. **Xcode Signing**, you need to do this before npm running on iOS devices)
+   *Note: Ensure you have configured signing in Xcode as described in the [iOS Setup](#2-ios-setup-physical-device) section before running on a physical device.*
 
 3. **Start Metro Bundler**:
     Open a terminal and run:
@@ -159,7 +160,7 @@ The app handles runtime permission requests. Ensure you tap "Allow" for "Nearby 
     1. **Deep Clean**:
         ```bash
         rm -rf ios/Pods ios/Podfile.lock ios/build ~/Library/Developer/Xcode/DerivedData/BLECLIApp-*
-        cd ios && pod install && cd ..
+        cd ios && bundle exec pod install && cd ..
         ```
     2. **Debug with xcbeautify**:
         Run the build command manually to see clean errors:

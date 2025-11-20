@@ -1,97 +1,125 @@
-# Getting Started
+# Glove CLI App
 
-BLE CLI APP In React Native
+A robust React Native application designed for interacting with Glove devices via Bluetooth Low Energy (BLE). This tool serves as both a command-line interface wrapper and a mobile diagnostic tool for the Glove hardware ecosystem.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Features
 
-## Step 1: Start Metro
+- **BLE Device Scanning & Connection**: Seamlessly discover and connect to Glove peripherals.
+- **Service & Characteristic Explorer**: Inspect GATT services and characteristics in real-time.
+- **Cross-Platform**: Runs on both iOS and Android physical devices.
+- **Type-Safe**: Built with TypeScript for reliability and maintainability.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📋 Prerequisites
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+Before you begin, ensure you have the following installed:
 
-```sh
-# Using npm
+- **Node.js** (v18+ recommended, managed via `nvm`)
+- **Watchman** (for file watching)
+- **Ruby** (for iOS dependency management)
+- **JDK 17** (for Android builds)
+- **Xcode** (for iOS) & **Android Studio** (for Android)
+
+For a comprehensive guide on setting up your development environment, please strictly follow our [**SETUP.md**](./SETUP.md).
+
+## 🛠 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd glove-cli-app
+   ```
+
+2. **Install JavaScript dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Install Ruby dependencies (iOS only)**
+   This project uses a `Gemfile` to ensure all developers use the same version of CocoaPods.
+   ```bash
+   gem install bundler
+   bundle install
+   ```
+
+4. **Install Native Pods (iOS only)**
+   ```bash
+   cd ios
+   bundle exec pod install
+   cd ..
+   ```
+
+## 🏃‍♂️ Running the App
+
+### 1. Start Metro Bundler
+The Metro bundler compiles the JavaScript code. Keep this terminal open.
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
+### 2. Run on Device
+**Note:** This app requires Bluetooth hardware support and is best tested on physical devices.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+#### iOS
+```bash
+npm run ios
+# Or specify a device
+npm run ios -- --device "Your iPhone Name"
+```
+
+#### Android
+```bash
+npm run android
+```
+
+## 📂 Project Structure
+
+```
+├── src/
+│   ├── context/       # React Contexts (e.g., BLE state)
+│   ├── screens/       # UI Screens (Scan, Services, CLI)
+│   └── utils/         # Helper functions and parsers
+├── ios/               # Native iOS project files
+├── android/           # Native Android project files
+├── __tests__/         # Jest test suites
+├── App.tsx            # Application entry point
+```
+
+## 🧹 Cleaning the Project
+
+If you encounter build issues or unexpected caching behavior, try these cleaning steps:
 
 ### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+cd android && ./gradlew clean && cd ..
 ```
 
 ### iOS
+```bash
+# Clean build folder
+cd ios && xcodebuild -workspace BLECLIApp.xcworkspace -scheme BLECLIApp clean && cd ..
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+# Deep clean (removes Pods and DerivedData)
+rm -rf ios/Pods ios/Podfile.lock ~/Library/Developer/Xcode/DerivedData/BLECLIApp-*
 ```
 
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
+### Metro Bundler (JavaScript)
+```bash
+npm start -- --reset-cache
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+### Watchman (File Watcher)
+If you encounter "Recrawled this watch" warnings or file change detection issues:
+```bash
+watchman watch-del-all
+watchman shutdown-server
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🤝 Contributing
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+1. Ensure you run the linter before pushing: `npm run lint`
+2. Follow the existing code style and directory structure.
+3. Open a Pull Request against the `main` branch.
 
-## Step 3: Modify your app
+## 📄 License
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This project is proprietary software.
