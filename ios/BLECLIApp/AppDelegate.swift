@@ -45,4 +45,11 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
+
+  override func customize(_ rootView: RCTRootView) {
+    super.customize(rootView)
+    let sb = UIStoryboard(name: "LaunchScreen", bundle: nil)
+    let vc = sb.instantiateInitialViewController()
+    rootView.loadingView = vc?.view
+  }
 }
