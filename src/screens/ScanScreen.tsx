@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Appbar, Card, Text, useTheme, IconButton, Avatar } from 'react-native-paper';
+import { Card, Text, useTheme, IconButton, Avatar, Surface } from 'react-native-paper';
 import { useBLE } from '../context/BLEContext';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,7 +46,11 @@ const DeviceItem = ({ item, isConnected = false, onPress, onDisconnect }: { item
       <Card.Title
         title={item.name || 'Unnamed Device'}
         titleVariant="titleMedium"
-        titleStyle={isConnected ? [styles.titleConnected, { color: theme.colors.primary }] : undefined}
+        titleStyle={[
+          styles.monotonFont,
+          isConnected && styles.titleConnected,
+          isConnected && { color: theme.colors.primary }
+        ]}
         subtitle={isConnected ? 'Connected • Tap to open CLI' : `ID: ${item.id}`}
         subtitleStyle={isConnected ? { color: theme.colors.primary } : undefined}
         left={renderLeft}
@@ -89,9 +93,12 @@ export const ScanScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.Content title="Device Scanner" />
-      </Appbar.Header>
+      <Surface elevation={2} style={[styles.headerSurface, { backgroundColor: theme.colors.surface }]}>
+        <View>
+          <Text variant="displaySmall" style={[styles.headerText, { color: theme.colors.onSurface }]}>Device</Text>
+          <Text variant="displaySmall" style={[styles.headerText, { color: theme.colors.onSurface }]}>Scanner</Text>
+        </View>
+      </Surface>
       
       <View style={styles.content}>
         <FlatList
@@ -169,5 +176,17 @@ const styles = StyleSheet.create({
   },
   cardConnected: {
     borderWidth: 1,
-  }
+  },
+  monotonFont: {
+    fontFamily: 'Monoton-Regular',
+  },
+  headerSurface: {
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+  },
+  headerText: {
+    fontFamily: 'Monoton-Regular',
+    lineHeight: 50,
+    paddingVertical: 4,
+  },
 });

@@ -30,7 +30,7 @@ export const CLIScreen = () => {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.Content title={connectedDevice.name || 'Unknown Device'} subtitle="Connected" />
+        <Appbar.Content title={connectedDevice.name || 'Unknown Device'} subtitle="Connected" titleStyle={styles.monotonFont} />
         <Appbar.Action icon="link-variant-off" onPress={disconnect} color={theme.colors.error} />
       </Appbar.Header>
 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   splitPane: { flex: 1, padding: 8, gap: 8 },
   pane: { flex: 1, borderRadius: 8, backgroundColor: '#1E1E1E', overflow: 'hidden' },
   paneHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 4, backgroundColor: '#2D2D2D' },
-  paneTitle: { color: '#ccc', fontWeight: 'bold' },
+  paneTitle: { color: '#ccc', fontFamily: 'Monoton-Regular' },
   listContent: { padding: 8 },
   logText: { fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', fontSize: 12, color: '#eee' },
   inputContainer: {
@@ -107,4 +107,5 @@ const styles = StyleSheet.create({
   },
   input: { backgroundColor: 'white' },
   noDeviceText: { marginBottom: 8 },
+  monotonFont: { fontFamily: 'Monoton-Regular' },
 });

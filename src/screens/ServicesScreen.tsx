@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, Platform } from 'react-native';
-import { Appbar, Card, Text, useTheme } from 'react-native-paper';
+import { Card, Text, useTheme, Surface } from 'react-native-paper';
 import { useBLE } from '../context/BLEContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,14 +19,17 @@ export const ServicesScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.Content title="Services & Characteristics" />
-      </Appbar.Header>
+      <Surface elevation={2} style={[styles.headerSurface, { backgroundColor: theme.colors.surface }]}>
+        <View>
+          <Text variant="displaySmall" style={[styles.headerText, { color: theme.colors.onSurface }]}>Services &</Text>
+          <Text variant="displaySmall" style={[styles.headerText, { color: theme.colors.onSurface }]}>Characteristics</Text>
+        </View>
+      </Surface>
 
       <ScrollView contentContainerStyle={styles.content}>
         <Card mode="elevated" style={styles.card}>
           <Card.Content>
-            <Text variant="titleMedium" style={styles.cardTitle}>Device Info</Text>
+            <Text variant="titleMedium" style={[styles.cardTitle, styles.monotonFont]}>Device Info</Text>
             <View style={styles.codeBlock}>
               <Text style={styles.json}>{JSON.stringify(connectedDevice, null, 2)}</Text>
             </View>
@@ -53,5 +56,17 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', 
     fontSize: 12,
     color: '#333'
+  },
+  monotonFont: {
+    fontFamily: 'Monoton-Regular',
+  },
+  headerSurface: {
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+  },
+  headerText: {
+    fontFamily: 'Monoton-Regular',
+    lineHeight: 50,
+    paddingVertical: 4,
   },
 });

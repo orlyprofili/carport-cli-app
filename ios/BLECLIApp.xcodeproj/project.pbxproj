@@ -10,8 +10,13 @@
 		0C80B921A6F3F58F76C31292 /* libPods-BLECLIApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-BLECLIApp.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7C981CD6C5BE4FFEA86CA0F0 /* generate_icons.sh in Resources */ = {isa = PBXBuildFile; fileRef = F0F73F56E63A450B8FAA3979 /* generate_icons.sh */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9A9311F19FFE46868244DDB0 /* icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 222F35DF761C431381825B16 /* icon.svg */; };
+		A3D41C6EC8B541D585558137 /* blecli.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7972BEF6E7D34A0A9689D3E2 /* blecli.jpg */; };
 		A5FC638A3EC9AB4894F25472 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		BF8E01FB420B4186AD7D9C3B /* blecliicon.png in Resources */ = {isa = PBXBuildFile; fileRef = EDDFAC53848C4F2CBBCCD5EB /* blecliicon.png */; };
+		F4B5419D3E6A4D1490A2D114 /* Monoton-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A3DC007AB55C4A4488224CD1 /* Monoton-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,12 +24,17 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BLECLIApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = BLECLIApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = BLECLIApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		222F35DF761C431381825B16 /* icon.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = icon.svg; path = ../assets/icon.svg; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-BLECLIApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BLECLIApp.debug.xcconfig"; path = "Target Support Files/Pods-BLECLIApp/Pods-BLECLIApp.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-BLECLIApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BLECLIApp.release.xcconfig"; path = "Target Support Files/Pods-BLECLIApp/Pods-BLECLIApp.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-BLECLIApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BLECLIApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = BLECLIApp/AppDelegate.swift; sourceTree = "<group>"; };
+		7972BEF6E7D34A0A9689D3E2 /* blecli.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = blecli.jpg; path = ../assets/blecli.jpg; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BLECLIApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A3DC007AB55C4A4488224CD1 /* Monoton-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Monoton-Regular.ttf"; path = "../assets/Monoton-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EDDFAC53848C4F2CBBCCD5EB /* blecliicon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = blecliicon.png; path = ../assets/blecliicon.png; sourceTree = "<group>"; };
+		F0F73F56E63A450B8FAA3979 /* generate_icons.sh */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.script.sh; name = generate_icons.sh; path = ../assets/generate_icons.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +85,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				C340AFD334D14567AA037B60 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -96,6 +107,19 @@
 				5709B34CF0A7D63546082F79 /* Pods-BLECLIApp.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C340AFD334D14567AA037B60 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A3DC007AB55C4A4488224CD1 /* Monoton-Regular.ttf */,
+				7972BEF6E7D34A0A9689D3E2 /* blecli.jpg */,
+				EDDFAC53848C4F2CBBCCD5EB /* blecliicon.png */,
+				F0F73F56E63A450B8FAA3979 /* generate_icons.sh */,
+				222F35DF761C431381825B16 /* icon.svg */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -162,6 +186,11 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				A5FC638A3EC9AB4894F25472 /* PrivacyInfo.xcprivacy in Resources */,
+				F4B5419D3E6A4D1490A2D114 /* Monoton-Regular.ttf in Resources */,
+				A3D41C6EC8B541D585558137 /* blecli.jpg in Resources */,
+				BF8E01FB420B4186AD7D9C3B /* blecliicon.png in Resources */,
+				7C981CD6C5BE4FFEA86CA0F0 /* generate_icons.sh in Resources */,
+				9A9311F19FFE46868244DDB0 /* icon.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

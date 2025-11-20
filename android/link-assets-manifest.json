@@ -1,0 +1,25 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/Monoton-Regular.ttf",
+      "sha1": "153a328e43fe091266e300116d93536044d74109"
+    },
+    {
+      "path": "assets/blecli.jpg",
+      "sha1": "3b46615afbe83f810dd8bce010c656f80184499c"
+    },
+    {
+      "path": "assets/blecliicon.png",
+      "sha1": "b32119eb4d3cff124fb5b87755f6e7a9274031c8"
+    },
+    {
+      "path": "assets/generate_icons.sh",
+      "sha1": "6b60f275ff09ab8ea2db4f12fa8f1628bc6d053d"
+    },
+    {
+      "path": "assets/icon.svg",
+      "sha1": "6ddd51bb98e8d0ee9ed1d865ea6710fb2b0db0d9"
+    }
+  ]
+}
